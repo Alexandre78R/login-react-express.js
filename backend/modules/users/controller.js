@@ -49,10 +49,18 @@ const login = async (req, res) => {
             const checkPassword = await argon2.verify(hash, password)
             
             if (checkPassword) {
+                const token = jwt.sign(
+                    { id: id, role: role },
+                    process.env.JWT_AUTH_SECRET,
+                    {
+                      expiresIn: "1h",
+                    }
+                  );
                 res.status(200).send({
                   id,
                   email,
                   role,
+                  token,
                 });
               } else {
                 res.status(403).send({
