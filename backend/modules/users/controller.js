@@ -99,8 +99,8 @@ const browse = async (req, res) => {
 } 
 
 const logout = (req, res) => {
-    // TODO remove JWT token from HTTP cookies
-};
+    return res.clearCookie("access_token").sendStatus(200);
+}
 
 const edit = async (req, res) => {
     const user = req.body;
