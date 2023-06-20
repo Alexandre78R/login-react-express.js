@@ -36,13 +36,29 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const [userLogin] = await findByMail(email);
-        if (userLogin[0] == null) {
-            // TODO invalid email
+        const userLogin = await findByMail(email);
+        if (userLogin.length === 0) {
+            res.status(403).send({
+                error: "Invalid email",
+            });
           } else {
-            const { id, email, password: hash, role } = userLogin[0];
-  
-            // TODO invalid password
+
+            const { id, email, role } = userLogin[0];
+            const hash = userLogin[0].password;
+            
+            const checkPassword = await argon2.verify(hash, password)
+            
+            if (checkPassword) {
+                res.status(200).send({
+                  id,
+                  email,
+                  role,
+                });
+              } else {
+                res.status(403).send({
+                  error: "Invalid password",
+                });
+            }
   
             // TODO sign JWT with 1h expiration
   
