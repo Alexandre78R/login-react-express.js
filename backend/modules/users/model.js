@@ -25,12 +25,13 @@ const findAll = () => {
 }
 
 const addOne = (user) => {
-    const { email, password } = user;
+    const { email, password, role } = user;
     return db
         .execute("insert into user (email, password, role) values (?, ?, ?)",
         [email, password, role])
         .then(([data]) => {
-            return { id: data.insertId, ...avis };
+            console.log("data -> ", data)
+            return { id: data.insertId, ...user };
         })
         .catch((err) =>{
             console.error("err", err)
