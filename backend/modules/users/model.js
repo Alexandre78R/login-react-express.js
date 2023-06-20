@@ -43,7 +43,8 @@ const deleteOne = (id) => {
     return db
         .execute("delete from user where id = ?", [id])
         .then(([data]) => {
-            return data;
+            // return data;
+            return { affectedRows : data.affectedRows };
         })
         .catch((err) =>{
             console.error("Error ", err)
@@ -52,11 +53,12 @@ const deleteOne = (id) => {
 }
 
 const updateOne = (user) => {
+    console.log("user --->", user)
     return db
         .execute("update user set email = ?, password = ?, role = ? where id = ?",
         [user.email, user.password, user.role, user.id])
         .then(([data]) => {
-            return { id: data.insertId, ...avis };
+            return { affectedRows : data.affectedRows, id: data.insertId, ...user };
         })
         .catch((err) =>{
             console.error("err", err)

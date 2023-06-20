@@ -109,7 +109,12 @@ const edit = async (req, res) => {
 
     try {
         const userEdit = await updateOne(user);
-        // TODO send the list of users (without passwords)
+        const { affectedRows, id, email, role } = userEdit;
+        if (affectedRows === 1) {
+            res.status(200).json({id, email, role})
+        } else {
+            res.status(404).json({ message : "No user found"})
+        }
     } catch (err) {
         console.log('Error', err)
         res.status(500).json({error : err.message});
@@ -117,10 +122,14 @@ const edit = async (req, res) => {
 };
 
 const deleteUserOne  = async (req, res) => {
-    const id = req.params.id;
     try {
-        const userEdit = await deleteOne(id);
-        // TODO send the list of users (without passwords)
+        const userDelete = await deleteOne(req.params.id);
+        const { affectedRows } = userDelete;
+        if (affectedRows === 1) {
+            res.status(200).json({affectedRows, message: "user delete"})
+        } else {
+            res.status(404).json({ message : "No user found"})
+        }
     } catch (err) {
         console.log('Error', err)
         res.status(500).json({error : err.message});
