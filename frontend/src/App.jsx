@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import Users from "./pages/Users";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
+import Register from "./pages/Register";
 
 function App() {
   return (
@@ -9,6 +10,9 @@ function App() {
       <div className="app">
         <nav>
           <ul>
+            <li>
+              <Link to="/register">register</Link>
+            </li>
             <li>
               <Link to="/login">Login</Link>
             </li>
@@ -22,6 +26,7 @@ function App() {
         </nav>
 
         <Routes>
+          <Route exact path="/register" element={<Register />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/users" element={<Users />} />
           <Route exact path="/logout" element={<Logout />} />
