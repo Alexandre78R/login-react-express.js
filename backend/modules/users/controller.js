@@ -46,6 +46,8 @@ const login = async (req, res) => {
             const { id, email, role } = userLogin[0];
             const hash = userLogin[0].password;
             
+            console.log("userLogin[0]", userLogin[0]);
+            console.log("hash", hash)
             const checkPassword = await argon2.verify(hash, password)
             
             if (checkPassword) {
