@@ -28,11 +28,12 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const [userLogin] = await findByMail(email);
-        if (userLogin[0] == null) {
+        const userLogin = await findByMail(email);
+        if (userLogin.length === 0) {
             // TODO invalid email
           } else {
-            const { id, email, password: hash, role } = userLogin[0];
+            const { id, email, role } = userLogin[0];
+            const hash = userLogin[0].password;
   
             // TODO invalid password
   

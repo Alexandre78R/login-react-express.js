@@ -2,7 +2,7 @@ const db = require("../../config/db");
 
 const findByMail = (email) => {
     return db
-        .execute("select * from user_post_avis where email = ?", [email])
+        .execute("select * from user where email = ?", [email])
         .then(([data]) => {
             return data;
         })
