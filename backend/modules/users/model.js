@@ -25,7 +25,7 @@ const findAll = () => {
 }
 
 const addOne = (user) => {
-    const { email, password } = user;
+    const { email, password, role } = user;
     return db
         .execute("insert into user (email, password, role) values (?, ?, ?)",
         [email, password, role])

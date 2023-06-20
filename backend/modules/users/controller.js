@@ -3,17 +3,24 @@ const { findByMail, findAll, deleteOne, addOne, updateOne} = require("./model");
 const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
-    const dataUser = req.body;
+    const { email, password } = req.body;
+
     // TODO check for email and password
 
     // TODO hash password
+
+    const dataUser = {
+        email : email,
+        password : password,
+        role : "ROLE_USER"
+    }
 
     try {
         const userNew = await addOne(dataUser);
         // TODO send the response
     } catch (err) {
         console.log('Error', err)
-        res.status(500).json({ message :  "Server error", err});
+        res.status(500).json({error : err.message});
     }
 }
 
@@ -35,7 +42,7 @@ const login = async (req, res) => {
           }
     } catch (err) {
         console.log('Error', err)
-        res.status(500).json({ message :  "Server error", err});
+        res.status(500).json({error : err.message});
     }
 
 }
@@ -46,7 +53,7 @@ const browse = async (req, res) => {
         // TODO send the list of users (without passwords)
     } catch (err) {
         console.log('Error', err)
-        res.status(500).json({ message :  "Server error", err});
+        res.status(500).json({error : err.message});
     }
 } 
 
@@ -64,7 +71,7 @@ const edit = async (req, res) => {
         // TODO send the list of users (without passwords)
     } catch (err) {
         console.log('Error', err)
-        res.status(500).json({ message :  "Server error", err});
+        res.status(500).json({error : err.message});
     }
 };
 
@@ -75,7 +82,7 @@ const deleteUserOne  = async (req, res) => {
         // TODO send the list of users (without passwords)
     } catch (err) {
         console.log('Error', err)
-        res.status(500).json({ message :  "Server error", err});
+        res.status(500).json({error : err.message});
     }
 }
 
