@@ -2,6 +2,8 @@ const { findByMail, findAll, deleteOne, addOne, updateOne} = require("./model");
 
 const jwt = require("jsonwebtoken");
 
+const argon2 = require("argon2");
+
 const register = async (req, res) => {
     const { email, password } = req.body;
 
@@ -17,8 +19,13 @@ const register = async (req, res) => {
     }
 
     try {
+
+        const hash = await argon2.hash(dataUser.password);
+        dataUser.password = hash;
+
         const userNew = await addOne(dataUser);
-        res.json(userNew)
+         res.status(201).send(userNew);
+         
     } catch (err) {
         console.log('Error', err)
         res.status(500).json({error : err.message});
