@@ -72,10 +72,6 @@ const login = async (req, res) => {
                   error: "Invalid password",
                 });
             }
-  
-            // TODO sign JWT with 1h expiration
-  
-            // TODO send the response and the HTTP cookie
           }
     } catch (err) {
         console.log('Error', err)
@@ -87,7 +83,15 @@ const login = async (req, res) => {
 const browse = async (req, res) => {
     try {
         const usersList = await findAll();
-        // TODO send the list of users (without passwords)
+        res.send(
+            usersList.map((user) => {
+              return {
+                id: user.id,
+                email: user.email,
+                role: user.role,
+              };
+            })
+        );
     } catch (err) {
         console.log('Error', err)
         res.status(500).json({error : err.message});
