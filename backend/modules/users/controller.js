@@ -110,6 +110,10 @@ const edit = async (req, res) => {
     user.id = parseInt(req.params.id, 10);
 
     try {
+
+        const hash = await argon2.hash(user.password);
+        user.password = hash;
+
         const userEdit = await updateOne(user);
         const { affectedRows, id, email, role } = userEdit;
         if (affectedRows === 1) {
