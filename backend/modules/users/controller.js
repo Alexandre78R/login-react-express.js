@@ -56,12 +56,17 @@ const login = async (req, res) => {
                       expiresIn: "1h",
                     }
                   );
-                res.status(200).send({
-                  id,
-                  email,
-                  role,
-                  token,
-                });
+                  res
+                  .cookie("access_token", token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                  })
+                  .status(200)
+                  .send({
+                    id,
+                    email,
+                    role,
+                  });
               } else {
                 res.status(403).send({
                   error: "Invalid password",
