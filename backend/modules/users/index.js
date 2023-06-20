@@ -9,7 +9,7 @@ router.get("/", authorization, isAdmin, browse);
 router.post("/register", register);
 router.post("/login", login);
 router.get("/logout", authorization, logout);
-router.put('/:id', edit);
+router.put('/:id', authorization, edit);
 router.delete('/:id', deleteUserOne);
 
 module.exports = router;
