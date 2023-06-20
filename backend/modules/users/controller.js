@@ -24,7 +24,12 @@ const register = async (req, res) => {
         dataUser.password = hash;
 
         const userNew = await addOne(dataUser);
-         res.status(201).send(userNew);
+        console.log("userNew?.errno", userNew?.errno)
+        if (userNew?.errno === 1062) {
+            res.status(409).send(userNew);
+        } else {
+            res.status(200).send(userNew);
+        }
          
     } catch (err) {
         console.log('Error', err)
