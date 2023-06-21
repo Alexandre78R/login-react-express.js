@@ -12,4 +12,4 @@ node migrate.js
 
 cd ..
 
-npm run start
+npm run dev
