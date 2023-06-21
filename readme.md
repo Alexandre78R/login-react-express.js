@@ -1,4 +1,4 @@
-Installez le projet :
+deInstallez le projet :
 
 configuration env bakcend and frontend : 
 
@@ -12,4 +12,4 @@ node migrate.js
 
 cd ..
 
-npm run start
+npm run dev
