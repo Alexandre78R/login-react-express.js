@@ -1,4 +1,4 @@
-deInstallez le projet :
+Installez le projet :
 
 configuration env bakcend and frontend : 
 
