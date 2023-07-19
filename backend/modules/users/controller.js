@@ -1,11 +1,13 @@
-const { findByMail, findAll, deleteOne, addOne, updateOne} = require("./model"); 
+const { findByMail, findAll, getById, deleteOne, addOne, updateOne, updateOneByMail} = require("./model"); 
 
 const jwt = require("jsonwebtoken");
 
 const argon2 = require("argon2");
 
+const {sendResetPasswordMail} = require("../../helpers/mailer.js");
+
 const register = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, admin } = req.body;
 
     if (!email || !password) {
       res.status(400).send({ error: "Please specify both email and password" });
@@ -28,7 +30,25 @@ const register = async (req, res) => {
         if (userNew?.errno === 1062) {
             res.status(409).send(userNew);
         } else {
-            res.status(200).send(userNew);
+            console.log("userNew",userNew)
+               const token = jwt.sign(
+                    { id: userNew.id, role: userNew.role },
+                    process.env.JWT_AUTH_SECRET,
+                    {
+                      expiresIn: "1h",
+                    }
+                  );
+                  res
+                  .cookie("access_token", token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                  })
+                  .status(200)
+                  .send({
+                    id : userNew?.role,
+                    email : userNew?.email,
+                    role : userNew?.role,
+                  });
         }
          
     } catch (err) {
@@ -166,7 +186,7 @@ const resetPassword = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_AUTH_SECRET);
-        const hash = await argon.hash(password);
+        const hash = await argon2.hash(password);
         await updateOneByMail({password: hash}, decoded.email);
         res.sendStatus(204);
     } catch (error) {
@@ -174,5 +194,16 @@ const resetPassword = async (req, res, next) => {
     }
 }
 
+const getCurrentUser = async (req, res, next) => {
+    try {
+        const [user] = await getById(req.userId);
+        console.log("user",user)
+        res.status(200).json(user);
+    } catch (err) {
+        next(err);
+    }
+}
 
-module.exports = { browse, register, login, logout, edit, deleteUserOne, sendResetPassword, resetPassword};
+
+
+module.exports = { browse, register, login, logout, edit, deleteUserOne, sendResetPassword, resetPassword, getCurrentUser};

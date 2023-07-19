@@ -1,35 +1,29 @@
-import { useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { signin } from "../store/auth";
+import authService from "../services/auth";
 
 function Login() {
   const [login, setLogin] = useState({ email: "", password: "" });
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const { email, password } = login;
-    if (email && password) {
-      // don't forget to import the axios module
-      axios
-        .post(
-          `${import.meta.env.VITE_BACKEND_URL}/users/login`,
-          {
-            email,
-            password,
-          },
-          {
-            withCredentials: true,
-          }
-        )
-        .then((res) => res.data)
-        .then((data) => {
-          console.log(data);
-          alert("Successfully logged in");
-        })
-        .catch((err) => {
-          alert(err.response.data.error);
-        });
-    } else {
-      alert("Please specify both email and password");
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await authService.login(login.email, login.password);
+      dispatch(signin(result.data));
+
+      navigate("/");
+    } catch (err) {
+      if (err.response?.status === 400) {
+        setError("email ou mot de passe incorrect");
+      } else {
+        setError("Nous rencontrons un problème");
+      }
     }
   };
 
@@ -59,7 +53,7 @@ function Login() {
         />
       </label>
       <br />
-      <input type="submit" value="Login" />
+      <input type="submit" value="Connexion" />
     </form>
   );
 }

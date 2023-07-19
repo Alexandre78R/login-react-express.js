@@ -65,5 +65,14 @@ const updateOne = (user) => {
         })
 }
 
+const updateOneByMail = async (user, email) => {
+    return db.query("UPDATE user SET ? WHERE email = ?", [user, email])
+}
 
-module.exports = { findByMail, findAll, deleteOne, addOne, updateOne}
+const getById = async (id) => {
+    const [user] = await db.query("SELECT * FROM user WHERE id = ?", [id]);
+    return user;
+}
+
+
+module.exports = { findByMail, findAll, deleteOne, addOne, updateOne, updateOneByMail, getById}

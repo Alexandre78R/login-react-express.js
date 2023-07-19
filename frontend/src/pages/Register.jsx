@@ -1,45 +1,56 @@
 import { useState } from "react";
 import axios from "axios";
+import { createAccount } from "../services/users";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { signin } from "../store/auth";
 
 function Register() {
   const [register, setRegister] = useState({ email: "", password: "" });
+  const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     const { email, password } = register;
-    if (email && password) {
-      axios
-        .post(
-          `${import.meta.env.VITE_BACKEND_URL}/users/register`,
-          {
-            email,
-            password,
-          },
-          {
-            withCredentials: true,
-          }
-        )
-        .then((res) => res.data)
-        .then((data) => {
-          console.log(data);
-          console.log(data);
-          alert("Successfully register");
-        })
-        .catch((err) => {
-          console.log("err", err);
-          if (err.response.status === 409) {
-            alert("Duplicate email !");
-          } else {
-            alert("Error Sever");
-          }
-        });
+    if (email === "" || password === "") {
+      return setError("Veuillez remplir tous les champs !"), setMessage(null);
     } else {
-      alert("Please specify both email and password");
+      try {
+        const result = await createAccount(register);
+        setError(null);
+        setMessage("Création du compte réussi !");
+
+        setTimeout(() => {
+          dispatch(signin(result.data));
+
+          navigate("/");
+        }, 1000);
+      } catch (err) {
+        if (err.response.status === 400) {
+          setMessage(null);
+          setError(
+            "L'adresse e-mail est déjà utilisée par un autre utilisateur."
+          );
+        } else {
+          setMessage(null);
+          setError(
+            "Nous rencontrons un problème, en espérant très vite(.js) chez MAKESENSE !"
+          );
+        }
+      }
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      {error && <p className="p_error_register">{error}</p>}
+      {message && <p>{message}</p>}
       <label htmlFor="email">
         Email:
         <input
@@ -66,7 +77,7 @@ function Register() {
         />
       </label>
       <br />
-      <input type="submit" value="Login" />
+      <input type="submit" value="Création de compte" />
     </form>
   );
 }
