@@ -15,7 +15,7 @@ const register = async (req, res) => {
     const dataUser = {
         email : email,
         password : password,
-        role : "ROLE_USER"
+        role : admin === 1 ? "ROLE_ADMIN" : "ROLE_USER"
     }
 
     try {
@@ -140,4 +140,32 @@ const deleteUserOne  = async (req, res) => {
     }
 }
 
-module.exports = { browse, register, login, logout, edit, deleteUserOne };
+const sendResetPassword = async (req, res, next) => {
+    const { email } = req.body;
+
+    try {
+        const resetToken = jwt.sign({ email }, process.env.JWT_AUTH_SECRET);
+        const url = `${process.env.FRONTEND_URL}/resetPassword?token=${resetToken}`;
+        await sendResetPasswordMail({ dest: email, url });
+        res.sendStatus(200);
+    } catch (error) {
+        next(error);
+    }
+
+}
+
+const resetPassword = async (req, res, next) => {
+    const { token, password } = req.body;
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_AUTH_SECRET);
+        const hash = await argon.hash(password);
+        await updateOneByMail({password: hash}, decoded.email);
+        res.sendStatus(204);
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+module.exports = { browse, register, login, logout, edit, deleteUserOne, sendResetPassword, resetPassword};

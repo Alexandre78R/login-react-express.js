@@ -53,7 +53,6 @@ const deleteOne = (id) => {
 }
 
 const updateOne = (user) => {
-    console.log("user --->", user)
     return db
         .execute("update user set email = ?, password = ?, role = ? where id = ?",
         [user.email, user.password, user.role, user.id])
