@@ -24,7 +24,12 @@ const register = async (req, res) => {
         dataUser.password = hash;
 
         const userNew = await addOne(dataUser);
-         res.status(201).send(userNew);
+        console.log("userNew?.errno", userNew?.errno)
+        if (userNew?.errno === 1062) {
+            res.status(409).send(userNew);
+        } else {
+            res.status(200).send(userNew);
+        }
          
     } catch (err) {
         console.log('Error', err)
@@ -46,6 +51,8 @@ const login = async (req, res) => {
             const { id, email, role } = userLogin[0];
             const hash = userLogin[0].password;
             
+            console.log("userLogin[0]", userLogin[0]);
+            console.log("hash", hash)
             const checkPassword = await argon2.verify(hash, password)
             
             if (checkPassword) {

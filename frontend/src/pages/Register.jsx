@@ -1,17 +1,16 @@
 import { useState } from "react";
 import axios from "axios";
 
-function Login() {
-  const [login, setLogin] = useState({ email: "", password: "" });
+function Register() {
+  const [register, setRegister] = useState({ email: "", password: "" });
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const { email, password } = login;
+    const { email, password } = register;
     if (email && password) {
-      // don't forget to import the axios module
       axios
         .post(
-          `${import.meta.env.VITE_BACKEND_URL}/users/login`,
+          `${import.meta.env.VITE_BACKEND_URL}/users/register`,
           {
             email,
             password,
@@ -23,10 +22,16 @@ function Login() {
         .then((res) => res.data)
         .then((data) => {
           console.log(data);
-          alert("Successfully logged in");
+          console.log(data);
+          alert("Successfully register");
         })
         .catch((err) => {
-          alert(err.response.data.error);
+          console.log("err", err);
+          if (err.response.status === 409) {
+            alert("Duplicate email !");
+          } else {
+            alert("Error Sever");
+          }
         });
     } else {
       alert("Please specify both email and password");
@@ -42,8 +47,8 @@ function Login() {
           name="email"
           id="email"
           placeholder="test@blabla.com"
-          value={login.email}
-          onChange={(e) => setLogin({ ...login, email: e.target.value })}
+          value={register.email}
+          onChange={(e) => setRegister({ ...register, email: e.target.value })}
         />
       </label>
       <br />
@@ -54,8 +59,10 @@ function Login() {
           name="password"
           id="password"
           placeholder="***********"
-          value={login.password}
-          onChange={(e) => setLogin({ ...login, password: e.target.value })}
+          value={register.password}
+          onChange={(e) =>
+            setRegister({ ...register, password: e.target.value })
+          }
         />
       </label>
       <br />
@@ -64,4 +71,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
