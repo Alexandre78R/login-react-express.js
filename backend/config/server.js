@@ -5,8 +5,9 @@ const helmet = require('helmet');
 const app = express();
 const router = require('../router.js');
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
-app.use(express.json());
+app.use(express.static(path.join(__dirname + "/../../public")));
 app.use(express.urlencoded({extended: true}));
 app.use(
     cors({
@@ -15,8 +16,10 @@ app.use(
       credentials: true,
     })
   );
-app.use(helmet())
+app.use(helmet());
+app.use(express.json());
 app.use(cookieParser());
+  
 
 app.use('/', router);
 

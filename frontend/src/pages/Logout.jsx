@@ -1,20 +1,22 @@
-import axios from "axios";
+import { useEffect, useState } from "react";
+import authService from "../services/auth";
+import { useNavigate, Link } from "react-router-dom";
+import { logout } from "../store/auth";
+import { useSelector, useDispatch } from "react-redux";
 
 function Logout() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/users/logout`, {
-        withCredentials: true,
-      })
-      .then(() => {
-        alert("Successfully logged out");
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          alert("You're not authenticated");
-        }
-      });
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
+    try {
+      await authService.logout();
+      dispatch(logout());
+      navigate("/login");
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   return (
